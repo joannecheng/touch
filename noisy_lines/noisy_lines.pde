@@ -1,8 +1,9 @@
 import SimpleOpenNI.*;
-
-int numberLines = 30;
 int numberSegments = 30;
 int lineSpace = 10;
+
+int numberLines = 30;
+ArrayList<Line> lines = new ArrayList<Line>();
 float yoff = 0.0;
 
 SimpleOpenNI context;
@@ -11,6 +12,12 @@ void setup() {
   size(1280, 500);
   background(0);
   stroke(255, 150);
+  strokeWeight(2);
+  smooth();
+
+  for(int i=0; i<numberLines; i++) {
+    lines.add(new Line(i));
+  }
 //
 //  context = new SimpleOpenNI(this);
 //
@@ -21,37 +28,41 @@ void setup() {
 void draw() {
   background(0);
 
-  for(int i=0; i<numberLines;i++) {
+  int i = 0;
+  for(Line l: lines) {
     pushMatrix();
     translate(0, i*lineSpace);
-    drawLine(i);
+    l.render();
     popMatrix();
+    i++;
   }
 }
 
-void drawLine(int index) {
-  noFill();
-  beginShape();
-  float segmentXIncrement = width/numberSegments;
-  float xoff = 0.0;
+class Line {
+  int numberSegments = 30;
+  int lineSpace = 10;
+  int index;
 
-  for(int i=0; i<numberSegments + 3;i++) {
-    float x = segmentXIncrement * i;
-    int lineSpacing = lineSpace*index;
-    int prevLineSpacing = lineSpace*(index-1);
-    float y = map(noise(xoff, yoff), 0, 1, -lineSpacing, lineSpacing);
-
-    if ((mouseY > height/2 - 50 && mouseY < height/2 + 50)
-      && (mouseX > x - segmentXIncrement && mouseX < x + segmentXIncrement)
-    ) {
-      y = map(noise(xoff, yoff), 0, 1, height/2 - 150, height/2 + 150);
-    }
-
-    vertex(x, y);
-    xoff += 0.01;
+  Line(int ind) {
+    index = ind;
   }
-  yoff += 0.0001;
-  vertex(width + 10, height + 10);
-  vertex(-10, height + 10);
-  endShape(CLOSE);
+
+  void render() {
+    float segmentXIncrement = width/numberSegments;
+    float xoff = 0.0;
+    int lineSpacing = lineSpace*index;
+
+    noFill();
+    beginShape();
+    vertex(-10, map(noise(xoff, yoff), 0, 1, -lineSpacing, lineSpacing));
+
+    for (int i=0; i<numberSegments;i++) {
+      float x = segmentXIncrement * (i+1);
+      float y = map(noise(xoff, yoff), 0, 1, -lineSpacing, lineSpacing);
+      xoff += 0.01;
+      vertex(x, y);
+    }
+    endShape();
+    yoff += 0.0001;
+  }
 }
