@@ -1,14 +1,27 @@
 import SimpleOpenNI.*;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiChannel;
+import javax.sound.midi.Synthesizer;
+
 int numberSegments = 30;
 int lineSpace = 10;
+Synthesizer synth;
 
-int numberLines = 30;
+int numberLines = 20;
 ArrayList<Line> lines = new ArrayList<Line>();
 float yoff = 0.0;
 
 SimpleOpenNI context;
 
 void setup() {
+  try {
+    synth = MidiSystem.getSynthesizer();
+    synth.open();
+  } catch (Exception e) {
+    e.printStackTrace();
+    exit();
+  }
+
   size(1280, 500);
   background(0);
   stroke(255, 150);
@@ -18,11 +31,6 @@ void setup() {
   for(int i=0; i<numberLines; i++) {
     lines.add(new Line(i));
   }
-//
-//  context = new SimpleOpenNI(this);
-//
-//  context.setMirror(false);
-//  context.enableDepth();
 }
 
 void draw() {
@@ -30,39 +38,33 @@ void draw() {
 
   int i = 0;
   for(Line l: lines) {
-    pushMatrix();
-    translate(0, i*lineSpace);
     l.render();
-    popMatrix();
-    i++;
   }
+
+  fill(255, 0, 0);
+  ellipse(mouseX, mouseY, 10, 10);
 }
 
-class Line {
-  int numberSegments = 30;
-  int lineSpace = 10;
-  int index;
+class Oscillation {
+}
 
-  Line(int ind) {
-    index = ind;
+class Note extends Thread {
+  int duration = 200;
+  int channel = 12;
+  int volume = 40;
+  int note = 80;
+  MidiChannel[] channels;
+
+  Note(int n) {
+    note = n;
+    channels = synth.getChannels();
   }
 
-  void render() {
-    float segmentXIncrement = width/numberSegments;
-    float xoff = 0.0;
-    int lineSpacing = lineSpace*index;
-
-    noFill();
-    beginShape();
-    vertex(-10, map(noise(xoff, yoff), 0, 1, -lineSpacing, lineSpacing));
-
-    for (int i=0; i<numberSegments;i++) {
-      float x = segmentXIncrement * (i+1);
-      float y = map(noise(xoff, yoff), 0, 1, -lineSpacing, lineSpacing);
-      xoff += 0.01;
-      vertex(x, y);
-    }
-    endShape();
-    yoff += 0.0001;
+  void play() {
+      try {
+        channels[channel].noteOn(note, volume );
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
   }
 }
