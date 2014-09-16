@@ -19,7 +19,7 @@ class Line {
     float segmentXIncrement = width/numberSegments;
 
     pushMatrix();
-    translate(0, height - lineSpacing);
+    translate(0, startingY() - lineSpacing);
     noFill();
     beginShape();
     vertex(-10, map(noise(xoff, yoff), 0, 1, -lineSpacing, lineSpacing));
@@ -60,6 +60,10 @@ class Line {
   }
 
   boolean mouseYInRange(float y) {
-    return mouseY < (y + (height - lineSpacing) + 5) && mouseY > (y + (height - lineSpacing) - 5);
+    return mouseY < (y + (startingY() - lineSpacing) + 5) && mouseY > (y + (startingY() - lineSpacing) - 5);
+  }
+
+  float startingY() {
+    return height * 3 / 4;
   }
 }
