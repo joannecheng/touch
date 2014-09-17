@@ -5,8 +5,6 @@ import javax.sound.midi.Synthesizer;
 
 Synthesizer synth;
 
-float yoff = 0.0;
-
 SimpleOpenNI context;
 LinesCollection l;
 

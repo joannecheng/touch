@@ -25,7 +25,7 @@ class LinesCollection {
 }
 
 class Line {
-  int numberSegments = 30;
+  int numberSegments = 20;
   int lineSpace = 10;
   int index;
   int lineSpacing;
@@ -66,10 +66,10 @@ class Line {
       if (mouseInRange(x, y, segmentXIncrement)) {
         playNote();
         if (pmouseY < mouseY) {
-          vertex(x, random(y, y+8));
+          vertex(x, random(y, y+10));
         }
         else {
-          vertex(x, random(y-8, y));
+          vertex(x, random(y-10, y));
         }
       } else {
         vertex(x, y);
