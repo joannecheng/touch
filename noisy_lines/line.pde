@@ -1,8 +1,37 @@
+class LinesCollection {
+  ArrayList<Line> lines = new ArrayList<Line>();
+
+  LinesCollection(int numberLines) {
+    for(int i=0; i<numberLines; i++) {
+      lines.add(new Line(i));
+    }
+  }
+
+  void render() {
+    for(Line l: lines) {
+      strokeWeight(2);
+      l.render();
+    }
+  }
+
+  void updateMousePos(float posX, float posY) {
+    fill(255, 0, 0);
+    ellipse(posX, posY, 10, 10);
+
+    for(Line l: lines) {
+      l.updateMousePos(posX, posY);
+    }
+  }
+}
+
 class Line {
   int numberSegments = 30;
   int lineSpace = 10;
   int index;
   int lineSpacing;
+
+  float mousePosX;
+  float mousePosY;
   Note note;
 
   boolean mouseOverString = false;
@@ -13,6 +42,11 @@ class Line {
     note = new Note(index*4 + 20);
   }
 
+  void updateMousePos(float x, float y) {
+    mousePosX = x;
+    mousePosY = y;
+  }
+
   void render() {
     yoff += 0.0001;
     float xoff = 0.0;
@@ -21,6 +55,7 @@ class Line {
     pushMatrix();
     translate(0, startingY() - lineSpacing);
     noFill();
+    stroke(255);
     beginShape();
     vertex(-10, map(noise(xoff, yoff), 0, 1, -lineSpacing, lineSpacing));
 
@@ -56,11 +91,11 @@ class Line {
   }
 
   boolean mouseXInRange(float x, float segmentXIncrement) {
-    return mouseX < x+segmentXIncrement/2 && mouseX > x-segmentXIncrement/2;
+    return mousePosX < x+segmentXIncrement/2 && mousePosX > x-segmentXIncrement/2;
   }
 
   boolean mouseYInRange(float y) {
-    return mouseY < (y + (startingY() - lineSpacing) + 5) && mouseY > (y + (startingY() - lineSpacing) - 5);
+    return mousePosY < (y + (startingY() - lineSpacing) + 5) && mousePosY > (y + (startingY() - lineSpacing) - 5);
   }
 
   float startingY() {
