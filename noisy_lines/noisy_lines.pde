@@ -7,6 +7,7 @@ Synthesizer synth;
 
 SimpleOpenNI context;
 LinesCollection l;
+float yoff = 0;
 
 void setup() {
   context = new SimpleOpenNI(this);
@@ -22,7 +23,7 @@ void setup() {
     exit();
   }
 
-  size(640, 480);
+  size(displayWidth, displayHeight);
   background(0);
   stroke(255, 150);
   smooth();
@@ -33,7 +34,7 @@ void setup() {
 void draw() {
   background(0);
   context.update();
-  image(context.userImage(),0,0);
+  //image(context.userImage(),0,0);
 
   l.render();
 
@@ -50,6 +51,7 @@ void drawSkeleton(int userId) {
   //saveFrame();
   stroke(255, 100, 0);
   strokeWeight(3);
+  /*
   context.drawLimb(userId, SimpleOpenNI.SKEL_NECK, SimpleOpenNI.SKEL_LEFT_SHOULDER);
   context.drawLimb(userId, SimpleOpenNI.SKEL_LEFT_SHOULDER, SimpleOpenNI.SKEL_LEFT_ELBOW);
   context.drawLimb(userId, SimpleOpenNI.SKEL_LEFT_ELBOW, SimpleOpenNI.SKEL_LEFT_HAND);
@@ -68,13 +70,15 @@ void drawSkeleton(int userId) {
   context.drawLimb(userId, SimpleOpenNI.SKEL_TORSO, SimpleOpenNI.SKEL_RIGHT_HIP);
   //context.drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_HIP, SimpleOpenNI.SKEL_RIGHT_KNEE);
   //context.drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_KNEE, SimpleOpenNI.SKEL_RIGHT_FOOT);
+  */
   PVector rightHandPos = new PVector();
   PVector jointPos = new PVector();
 
   context.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_HAND, jointPos);
   context.convertRealWorldToProjective(jointPos, rightHandPos);
 
-  l.updateMousePos(rightHandPos.x, rightHandPos.y);
+
+  l.updateMousePos(map(rightHandPos.x, 0, 640, 0, width), map(rightHandPos.y, 0, 480, 0, height));
 }
 
 void onNewUser(SimpleOpenNI curContext, int userId)
